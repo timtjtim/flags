@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Select Country</title>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- country-select-js CSS + JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/country-select-js@2.0.1/build/css/countrySelect.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/country-select-js@2.0.1/build/js/countrySelect.min.js"></script>
+</head>
+
+<body style="font-family: sans-serif">
+    <h1>Select a Country</h1>
+    <div id="status" style="width: 200px; height:40px; border:1px solid black; background: red; text-align: center;"></div>
+    <input id="country" type="text">
+
+    <h1><a href="./flag.html" target="_blank">View the Flag</a></h1>
+
+    <script>
+        localStorage.removeItem("selectedCountry");
+
+        $(function () {
+            $("#country").countrySelect({
+                defaultCountry: "gb"
+            });
+
+            // when user types in the search input
+            $("#country").on("input", function () {
+                $("#status").css("background", "red");
+                console.log("Search started");
+            });
+
+
+            $("#country").on("change", function () {
+                const data = $("#country").countrySelect("getSelectedCountryData");
+                console.log("Country selected:", data);
+                localStorage.setItem("selectedCountry", JSON.stringify(data));
+                console.log("Saved to localStorage:", localStorage.getItem("selectedCountry"));
+
+                $("#status").css("background", "green");
+                $("#status").text(data.name)
+            });
+        });
+    </script>
+</body>
+
+</html>
