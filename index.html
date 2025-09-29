@@ -9,14 +9,45 @@
     <!-- country-select-js CSS + JS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/country-select-js@2.0.1/build/css/countrySelect.min.css">
     <script src="https://cdn.jsdelivr.net/npm/country-select-js@2.0.1/build/js/countrySelect.min.js"></script>
+
+    <style>
+        .status {
+            width: 500px;
+            height: 50px;
+            font-size: 20pt;
+            border: 1px solid black;
+            text-align: center;
+        }
+        .country-select .selected-flag {
+            zoom: 3;
+        }
+    </style>
 </head>
 
 <body style="font-family: sans-serif">
     <h1>Select a Country</h1>
-    <div id="status" style="width: 200px; height:40px; border:1px solid black; background: red; text-align: center;"></div>
-    <input id="country" type="text">
+    <table>
+        <tr>
+            <td>Live</td>
+            <td><div id="live" class="status" style="background: red;"></div></td>
+        </tr>
+        <tr>
+            <td>Next Up</td>
+            <td>
+                <div id="next-up" class="status" style="background: green;"></div>
+                <span>Press <kbd>Enter</kbd> or click "Go" to transition from 'Next Up' to 'Live'</span>
+            </td>
+        </tr>
+    </table>
 
-    <h1><a href="./flag.html" target="_blank">Open the flag page</a></h1>
+    <table>
+        <tr>
+            <td><input id="country" style="zoom: 3" type="text"></td>
+            <td><button id="transition">Go</button></td>
+        </tr>
+    </table>
+
+    <h1><a href="./flag.html" target="_blank">Open the display page</a></h1>
 
     <script>
         localStorage.removeItem("selectedCountry");
@@ -27,21 +58,30 @@
             });
 
             // when user types in the search input
-            $("#country").on("input", function () {
-                $("#status").css("background", "red");
-                console.log("Search started");
+            $("#country").on("input change", function () {
+                const data = $("#country").countrySelect("getSelectedCountryData");
+                // $("#status").css("background", "red");
+                console.log("Search started, currently", JSON.stringify(data));
+                $("#next-up").text(data.name);
             });
 
-
-            $("#country").on("change", function () {
+            const setFlag = function () {
                 const data = $("#country").countrySelect("getSelectedCountryData");
                 console.log("Country selected:", data);
                 localStorage.setItem("selectedCountry", JSON.stringify(data));
                 console.log("Saved to localStorage:", localStorage.getItem("selectedCountry"));
 
-                $("#status").css("background", "green");
-                $("#status").text(data.name)
+                // $("#status").css("background", "green");
+                $("#live").text(data.name);
+            }
+
+            $(document).on('keypress', function (e) {
+                if (e.which == 13) {
+                    setFlag()
+                }
             });
+
+            $("#transition").on("click", setFlag);
         });
     </script>
 </body>
